@@ -7,18 +7,23 @@ chrome.runtime.onInstalled.addListener(function() {
   chrome.storage.local.set({showTabs: false}, function() { });
   chrome.browserAction.setBadgeText({text: ''});
   chrome.browserAction.setBadgeBackgroundColor({color: '#008000'})
-  let code = 'document.body.style.backgroundColor="white"';
+  let file = 'showTabs.js';
+
+  let URL_patt = new RegExp('https?://.*/.*');
 
   function executeScript(id) {
-    console.log(code);
     chrome.tabs.executeScript(id, {
-      code: code
+      file: file
+    }, function(results) { // callback for debugging
+      results.forEach(function(result) {
+        console.log(result);
+      });
     });
   }
 
   chrome.tabs.onUpdated.addListener(
     function(tabId, changeInfo, tab) {
-      if (changeInfo.url) {
+      if (changeInfo.url && URL_patt.test(changeInfo.url)) {
         executeScript(tabId);
       }
   });
@@ -27,10 +32,10 @@ chrome.runtime.onInstalled.addListener(function() {
     // toggle showTabs and change the source called
     chrome.storage.local.get('showTabs', function(data) {
       if (!data.showTabs) {
-        code = 'document.body.style.backgroundColor="red"';
+        file = 'showTabs.js';
         chrome.browserAction.setBadgeText({text: 'ON'});
       } else {
-        code = 'document.body.style.backgroundColor="white"';
+        file = 'hideTabs.js';
         chrome.browserAction.setBadgeText({text: ''});
       }
 
@@ -43,4 +48,5 @@ chrome.runtime.onInstalled.addListener(function() {
       });
     });
   });
+
 });

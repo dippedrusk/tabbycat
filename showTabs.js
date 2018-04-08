@@ -1,4 +1,6 @@
 
 'use strict';
 
-console.log("Test run of showTabs.js");
+document.body.style.backgroundColor="red";
+
+'Turned it red';

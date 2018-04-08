@@ -3,7 +3,7 @@
   "version": "1.0",
   "description": "Shows tab characters in all windows when turned on",
   "permissions": [
-    "http://*/", "https://*/",
+    "http://*/*", "https://*/*",
     "tabs","declarativeContent","storage"
   ],
   "background": {
@@ -13,11 +13,5 @@
   "browser_action": {
     "default_title": "Tabby Cat"
   },
-  "content_scripts": [
-    {
-      "matches": ["http://*/", "https://*/"],
-      "js": ["showTabs.js"]
-    }
-  ],
   "manifest_version": 2
 }
