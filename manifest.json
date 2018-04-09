@@ -4,7 +4,7 @@
   "description": "Shows tab characters in all windows when turned on",
   "permissions": [
     "http://*/*", "https://*/*",
-    "tabs","declarativeContent","storage"
+    "tabs","storage"
   ],
   "background": {
     "scripts": ["background.js"],
