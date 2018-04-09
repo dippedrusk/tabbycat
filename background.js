@@ -12,22 +12,22 @@ function updatedTabListener(tabId, changeInfo, tab) {
   }
 }
 
+function executeScript(id) {
+  if (showTabs) {
+    chrome.tabs.executeScript(id, {
+      file: 'showTabs.js'
+    });
+  } else {
+    chrome.tabs.reload(id);
+  }
+}
+
 function main() {
     // defaults
     chrome.storage.local.set({showTabs: false}, function() {});
     chrome.browserAction.setBadgeText({text: ''});
     chrome.browserAction.setBadgeBackgroundColor({color: '#008000'})
     showTabs = false;
-
-    function executeScript(id) {
-      if (showTabs) {
-        chrome.tabs.executeScript(id, {
-          file: 'showTabs.js'
-        });
-      } else {
-        chrome.tabs.reload(id);
-      }
-    }
 
     chrome.browserAction.onClicked.addListener(function(tab) {
       chrome.storage.local.get('showTabs', function(data) {
