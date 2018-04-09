@@ -1,56 +1,64 @@
 
 'use strict';
 
-chrome.runtime.onInstalled.addListener(function() {
+let URL_patt = new RegExp('https?://.*/.*');
+let showTabs = false;
+let promptUser = true;
+let confirmMessage = 'Turning off TabbyCat will reload all your tabs and you may lose data. Continue?';
 
-  // defaults
-  chrome.storage.local.set({showTabs: false}, function() { });
-  chrome.browserAction.setBadgeText({text: ''});
-  chrome.browserAction.setBadgeBackgroundColor({color: '#008000'})
-  let showTabs = false;
+function updatedTabListener(tabId, changeInfo, tab) {
+  if (changeInfo.url && URL_patt.test(changeInfo.url)) {
+    executeScript(tabId);
+  }
+}
 
-  let URL_patt = new RegExp('https?://.*/.*');
+function main() {
+    // defaults
+    chrome.storage.local.set({showTabs: false}, function() {});
+    chrome.browserAction.setBadgeText({text: ''});
+    chrome.browserAction.setBadgeBackgroundColor({color: '#008000'})
+    showTabs = false;
 
-  function executeScript(id) {
-    if (showTabs) {
-      chrome.tabs.executeScript(id, {
-        file: 'showTabs.js'
-      }, function(results) { // callback for debugging
-        results.forEach(function(result) {
-          console.log(result);
+    function executeScript(id) {
+      if (showTabs) {
+        chrome.tabs.executeScript(id, {
+          file: 'showTabs.js'
+        });
+      } else {
+        chrome.tabs.reload(id);
+      }
+    }
+
+    chrome.browserAction.onClicked.addListener(function(tab) {
+      chrome.storage.local.get('showTabs', function(data) {
+        // user trying to turn off TabbyCat
+        if (promptUser && data.showTabs) {
+          if (!window.confirm(confirmMessage)) {
+            return;
+          }
+        }
+
+        // toggle showTabs
+        if (!data.showTabs) {
+          showTabs = true;
+          chrome.browserAction.setBadgeText({text: 'ON'});
+          chrome.storage.local.set({showTabs: !(data.showTabs)});
+          chrome.tabs.onUpdated.addListener(updatedTabListener);
+        } else {
+          showTabs = false;
+          chrome.browserAction.setBadgeText({text: ''});
+          chrome.storage.local.set({showTabs: !(data.showTabs)});
+          chrome.tabs.onUpdated.removeListener(updatedTabListener);
+        }
+
+        chrome.tabs.query({url: ['http://*/*', 'https://*/*']}, function(tabs) {
+          tabs.forEach(function(t) {
+            executeScript(t.id, !(data.showTabs));
+          });
         });
       });
-    } else {
-      
-      chrome.tabs.reload(id);
-    }
-  }
-
-  chrome.tabs.onUpdated.addListener(
-    function(tabId, changeInfo, tab) {
-      if (changeInfo.url && URL_patt.test(changeInfo.url)) {
-        executeScript(tabId);
-      }
-  });
-
-  chrome.browserAction.onClicked.addListener(function(tab) {
-    // toggle showTabs
-    chrome.storage.local.get('showTabs', function(data) {
-      if (!data.showTabs) {
-        showTabs = true;
-        chrome.browserAction.setBadgeText({text: 'ON'});
-      } else {
-        showTabs = false;
-        chrome.browserAction.setBadgeText({text: ''});
-      }
-
-      chrome.storage.local.set({showTabs: !(data.showTabs)});
     });
+}
 
-    chrome.tabs.query({url: ['http://*/*', 'https://*/*']}, function(tabs) {
-      tabs.forEach(function(t) {
-        executeScript(t.id);
-      });
-    });
-  });
-});
+chrome.runtime.onInstalled.addListener(main);
+chrome.runtime.onStartup.addListener(main);
