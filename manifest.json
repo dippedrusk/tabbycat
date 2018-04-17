@@ -1,10 +1,9 @@
 {
   "name": "Tabby Cat",
   "version": "1.0",
-  "description": "Shows tab characters in all windows when turned on",
+  "description": "Shows tab characters in the current tab when turned on",
   "permissions": [
-    "http://*/*", "https://*/*",
-    "tabs","storage"
+    "activeTab"
   ],
   "background": {
     "scripts": ["background.js"],
@@ -12,6 +11,9 @@
   },
   "browser_action": {
     "default_title": "Tabby Cat"
+  },
+  "options_ui": {
+    "page": "options.html"
   },
   "manifest_version": 2
 }
