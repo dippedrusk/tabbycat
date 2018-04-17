@@ -3,7 +3,7 @@
   "version": "1.0",
   "description": "Shows tab characters in the current tab when turned on",
   "permissions": [
-    "activeTab"
+    "activeTab", "storage"
   ],
   "background": {
     "scripts": ["background.js"],
@@ -14,6 +14,10 @@
   },
   "options_ui": {
     "page": "options.html"
+  },
+  "icons": {
+    "128": "images/tabbycat128.png",
+    "48": "images/tabbycat48.png"
   },
   "manifest_version": 2
 }

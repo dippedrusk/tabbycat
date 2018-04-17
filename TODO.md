@@ -6,10 +6,12 @@
 * Add support for local files - done
 * Make *TAB* show up in red - done
 * Add a MutationObserver to support dynamic pages
-* Parametrize confirmation dialog in Options
+* Parametrize confirmation dialog in Options - done
 * Parametrize the way tabs are rendered, maybe just the colour
+* Fix indentation in TabbyCat source
+* Make a better icon
 
 ## Design decisions
 * Decide how to alternatively render tab characters - *TAB*
 * How to deal with text that is rendered that way before the extension was applied? - just reload the page
-* Consider making activeTab version of TabbyCat / parametrize it
+* Consider making activeTab version of TabbyCat / parametrize it - converted to activeTab version
