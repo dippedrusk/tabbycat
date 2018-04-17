@@ -1,7 +1,6 @@
 
 'use strict';
 
-let promptUser = true;
 let confirmMessage = 'Turning off TabbyCat will reload this tab and you may lose data. Continue?';
 
 function startUp() {
@@ -18,9 +17,9 @@ function startUp() {
               if (result.promptUser && !window.confirm(confirmMessage)) {
                   return;
               }
+              chrome.browserAction.setBadgeText({text: '', tabId: tab.id});
+              chrome.tabs.reload(tab.id);
           });
-          chrome.browserAction.setBadgeText({text: '', tabId: tab.id});
-          chrome.tabs.reload(tab.id);
       } else {
           chrome.browserAction.setBadgeText({text: 'ON', tabId: tab.id});
           chrome.tabs.executeScript(tab.id, {
